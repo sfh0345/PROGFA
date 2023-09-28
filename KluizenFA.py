@@ -1,7 +1,7 @@
 import os
 bestandsnaam = "kluizen.txt"
 
-
+#maak functie om het aantal kluizen op te vragen. Deze kan je later weer opvragen
 def aantal_kluizen_vrij():
     if not os.path.exists(bestandsnaam):
         return 12  # Als het bestand niet bestaat, zijn alle kluizen beschikbaar
@@ -9,8 +9,9 @@ def aantal_kluizen_vrij():
         with open(bestandsnaam, "r") as file:
             lines = file.readlines()
             return 12 - len(lines)
+        #read hoeveel lijnen er zijn in het bestand. en doe dan 12- aantal lijnen voor hoeveel kluizen nog over zijn
 
-
+#Def nieuwe kluis maakt een functie waarmee je een nieuwe kluis kan aanmaken. Deze functie kan je later weer oproepen
 def nieuwe_kluis():
     kluisnummers = [i for i in range(1, 13)]
 
@@ -24,30 +25,38 @@ def nieuwe_kluis():
             #leest eerst de file. met line.split[0] haalt hij het kluisnummer van elke kluis in de kluizen.txt
             #dan verwijdert ie alle nummers die in de tekst file en dan houd je dus de overgebleven dingen over waaruit je een kluis kan assignen
 
+#checkt of kluisnummers leeg is
     if not kluisnummers:
         return -2  # Geen kluizen beschikbaar
     else:
         nieuwe_kluisnummer = kluisnummers[0]
-        kluiscode = input("Voer een kluiscode in: ")
+        kluiscode = str(input("Voer een kluiscode in: (1234)"))
+        if kluiscode.isdigit() and len(str(kluiscode)) == 4:
+            #isdigit word hier gebruikt om te kijken of het ingevoerde getal een int is.
+            with open(bestandsnaam, "a") as file:
+                file.write(f"{nieuwe_kluisnummer};{kluiscode}\n")
+                #schrijf het kluisnummer;met;een;kluiscode;weg
+            return nieuwe_kluisnummer
+        #return het kluisnummer om later te gebruiken
+        else:
+            return -1
+        #kluiscode is niet correct
 
-        # Voeg de nieuwe kluis toe aan het bestand
-        with open(bestandsnaam, "a") as file:
-            file.write(f"{nieuwe_kluisnummer};{kluiscode}")
-
-        return nieuwe_kluisnummer
 
 
 
-
+#met deze functie kan je een bestand openen. Deze functie kan je daardoor  later weer oproepen.
 def kluis_openen():
-    kluisnummer = int(input("Voer uw kluisnummer in: "))
-    kluiscode = input("Voer uw kluiscode in: ")
+    kluisnummer = str(input("Voer uw kluisnummer in: "))
+    kluiscode = str(input("Voer uw kluiscode in: "))
 
     if os.path.exists(bestandsnaam):
         with open(bestandsnaam, "r") as file:
             for line in file:
-                saved_kluisnummer, saved_kluiscode = map(int, line.strip().split(";"))
+                saved_kluisnummer, saved_kluiscode = map(str, line.strip().split(";"))
+                #dit stored het eerste int van de file per lijn in saved_kluisnummer, en het 2e deel in saved_kluiscode.met de map functie zet deze lijst om  in ints
                 if saved_kluisnummer == kluisnummer and saved_kluiscode == kluiscode:
+                    #checkt of de opgegeven kluisnummer en kluiscode overeenkomen.
                     return True
 
     return False
@@ -56,22 +65,35 @@ def kluis_teruggeven():
     kluisnummer = int(input("Voer uw kluisnummer in: "))
     kluiscode = input("Voer uw kluiscode in: ")
 
-    lines_to_keep = []
+    lines_to_keep = []  # Initialize a list to store lines we want to keep
+    found = False  # Variable to track if the combination was found
 
     if os.path.exists(bestandsnaam):
         with open(bestandsnaam, "r") as file:
             for line in file:
-                saved_kluisnummer, saved_kluiscode = map(int, line.strip().split(";"))
-                if saved_kluisnummer == kluisnummer and saved_kluiscode == kluiscode:
-                    continue  # Deze kluis wordt teruggegeven, dus niet bewaren in de nieuwe lijst
+                saved_kluisnummer, saved_kluiscode = map(str, line.strip().split(";"))
+
+                if saved_kluisnummer == str(kluisnummer) and saved_kluiscode == kluiscode:
+                    found = True  # Set the flag indicating the combination was found
+                    continue  # Skip the line that needs to be deleted
                 else:
+                    # Add other lines to the list to be kept
                     lines_to_keep.append(line)
 
-    # Schrijf de bijgewerkte lijst met kluizen naar het bestand
-    with open(bestandsnaam, "w") as file:
-        file.writelines(lines_to_keep)
+        if found:
+            # Write the lines to keep back to the file if the combination was found
+            with open(bestandsnaam, "w") as file:
+                file.writelines(lines_to_keep)
 
-    return True
+            # print("Kluis succesvol teruggegeven.")
+            return True
+        else:
+            # print("Ongeldige combinatie van kluisnummer en code.")
+            return False
+    else:
+        print("Bestandsnaam niet gevonden.")
+        return False
+
 
 
 
@@ -99,6 +121,8 @@ while valid == "false":
         resultaat = nieuwe_kluis()
         if resultaat == -2:
             print("Geen kluizen beschikbaar.")
+        elif resultaat == -1:
+            print("Je kluiscode moet precies 4 cijfers bevatten")
         else:
             print(f"Uw persoonlijke kluis is aangemaakt. Uw kluisnummer is: {resultaat}")
 
@@ -106,15 +130,30 @@ while valid == "false":
 
 
     elif function == "3":
-        print("Functie 3:")
         valid = "true"
+        if kluis_openen():
+            print("Kluis geopend. (Wachtwoord goed)")
+        else:
+            print("Ongeldige combinatie van kluisnummer en code.")
 
 
 
 
     elif function == "4":
-        print("Functie 4:")
         valid = "true"
+        teruggeven = kluis_teruggeven()
+        if teruggeven:
+            print("Kluis succesvol teruggegeven.")
+        elif teruggeven == False:
+            print("Ongeldige combinatie van kluisnummer en code.")
+        else:
+            print("Tering zieke error")
+
+
+
+
+
+
     elif function == "5":
         print("U verlaat nu het programma...")
         break
