@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import builtins
 import collections
 import sys
 import traceback
+import os
+
+bestandsnaam = "kluizen.txt"
 
 """
 Programming
@@ -38,7 +39,13 @@ def aantal_kluizen_vrij():
     Returns:
         int: Het aantal vrije kluizen.
     """
-    return
+    if not os.path.exists(bestandsnaam):
+        return 12  # Als het bestand niet bestaat, zijn alle kluizen beschikbaar
+    else:
+        with open(bestandsnaam, "r") as file:
+            lines = file.readlines()
+            return 12 - len(lines)
+        #read hoeveel lijnen er zijn in het bestand. en doe dan 12- aantal lijnen voor hoeveel kluizen nog over zijn
 
 
 def nieuwe_kluis():

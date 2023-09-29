@@ -62,39 +62,36 @@ def kluis_openen():
     return False
 
 def kluis_teruggeven():
-    kluisnummer = int(input("Voer uw kluisnummer in: "))
-    kluiscode = input("Voer uw kluiscode in: ")
+    kluisnummer = str(input("Voer uw kluisnummer in: "))
+    kluiscode = str(input("Voer uw kluiscode in: "))
 
-    lines_to_keep = []  # Initialize a list to store lines we want to keep
-    found = False  # Variable to track if the combination was found
+    lines_to_keep = []  #maak een lijstje met de kluizen die je wilt bewawren
+    found = False  #maak een var aan om aan te geven of de codes overeenkomen
 
     if os.path.exists(bestandsnaam):
         with open(bestandsnaam, "r") as file:
             for line in file:
                 saved_kluisnummer, saved_kluiscode = map(str, line.strip().split(";"))
 
-                if saved_kluisnummer == str(kluisnummer) and saved_kluiscode == kluiscode:
-                    found = True  # Set the flag indicating the combination was found
-                    continue  # Skip the line that needs to be deleted
+                if saved_kluisnummer == kluisnummer and saved_kluiscode == kluiscode:
+                    found = True  # var om te controleren of de codes werken
+                    continue  #deze lijn skipt hij in de loop omdat deze juist niet meer in het bestand wilt hebben
                 else:
-                    # Add other lines to the list to be kept
+                    #voeg de lines toe die aan het bestand moeten toegevoegd
                     lines_to_keep.append(line)
 
         if found:
-            # Write the lines to keep back to the file if the combination was found
+            # Schrijf de lines terug nadat je de combinatie hebt geverified
             with open(bestandsnaam, "w") as file:
                 file.writelines(lines_to_keep)
-
-            # print("Kluis succesvol teruggegeven.")
             return True
+        #boolean true terug geven als het is gelukt
         else:
-            # print("Ongeldige combinatie van kluisnummer en code.")
             return False
+        #boolean False terug geven als het niet is gelukt
     else:
-        print("Bestandsnaam niet gevonden.")
+        print("Het bestand is niet gevonden.")
         return False
-
-
 
 
 valid = "false"
@@ -105,6 +102,7 @@ while valid == "false":
     print("4: Ik geef mijn kluis terug")
     print("5: Afsluiten\n")
     function = input("Voer uw keuze in: (1/2/3/4/5) ")
+    #hoofdmenu in een loop
 
 
 
@@ -112,8 +110,7 @@ while valid == "false":
     if function == "1":
         valid = "true"
         print(f"Aantal vrije kluizen: {aantal_kluizen_vrij()}\n")
-
-
+        #print het aantal kluizen vrij in een fstring
 
 
     elif function == "2":
@@ -125,8 +122,7 @@ while valid == "false":
             print("Je kluiscode moet precies 4 cijfers bevatten")
         else:
             print(f"Uw persoonlijke kluis is aangemaakt. Uw kluisnummer is: {resultaat}")
-
-
+        #print de resultaten uit de define
 
 
     elif function == "3":
@@ -135,9 +131,7 @@ while valid == "false":
             print("Kluis geopend. (Wachtwoord goed)")
         else:
             print("Ongeldige combinatie van kluisnummer en code.")
-
-
-
+        #print de waarden uit de define van kluis openen
 
     elif function == "4":
         valid = "true"
@@ -147,11 +141,8 @@ while valid == "false":
         elif teruggeven == False:
             print("Ongeldige combinatie van kluisnummer en code.")
         else:
-            print("Tering zieke error")
-
-
-
-
+            print("Er is iets fout gegaan. Probeer het later opnieuw")
+        #error code omdat het eerst nog wel eens fout ging met de boolean
 
 
     elif function == "5":
@@ -162,6 +153,7 @@ while valid == "false":
         valid = "false"
         loophoofdmenu = "false"
         ongeldige_keuze = "true"
+        #loop vars instellen om te loopen
 
 
     loophoofdmenu = "true"
@@ -178,5 +170,4 @@ while valid == "false":
             break
         else:
             loophoofdmenu = "true"
-
-
+            #grote loop zodat sommige dingen breaken en sommige dingen juist nog een keer loopen
