@@ -4,8 +4,10 @@ import collections
 import sys
 import traceback
 import os
+#inport os
 
 bestandsnaam = "kluizen.txt"
+#bestandsnaam invoegen
 
 """
 Programming
@@ -20,15 +22,6 @@ Werk onderstaande functies uit.
 Voeg commentaar toe om je code toe te lichten.
 Lever je werk in op Canvas als alle tests slagen.
 """
-
-
-
-
-
-
-
-
-
 
 def aantal_kluizen_vrij():
     """
@@ -65,7 +58,34 @@ def nieuwe_kluis():
     Returns:
         int: het toegekende kluisnummer of foutcode -1 of -2
     """
-    return
+    kluisnummers = [i for i in range(1, 13)]
+
+    if os.path.exists(bestandsnaam):
+        with open(bestandsnaam, "r") as file:
+            for line in file:
+                kluisnummer = int(line.split(";")[0])
+                if kluisnummer in kluisnummers:
+                    kluisnummers.remove(kluisnummer)
+            #De lijst updaten met welke kluizen er nog over zijn voor gebruik
+            #leest eerst de file. met line.split[0] haalt hij het kluisnummer van elke kluis in de kluizen.txt
+            #dan verwijdert ie alle nummers die in de tekst file en dan houd je dus de overgebleven dingen over waaruit je een kluis kan assignen
+
+#checkt of kluisnummers leeg is
+    if not kluisnummers:
+        return -2  # Geen kluizen beschikbaar
+    else:
+        nieuwe_kluisnummer = kluisnummers[0]
+        kluiscode = str(input("Voer een kluiscode in: (1234)"))
+        if not ';' in kluiscode and len(str(kluiscode)) >= 4:
+            #Er word hier gekeken of ; in kluiscode is, en of er een code van minimaal 4 karakters is ingevuld
+            with open(bestandsnaam, "a") as file:
+                file.write(f"{nieuwe_kluisnummer};{kluiscode}\n")
+                #schrijf het kluisnummer;met;een;kluiscode;weg
+            return nieuwe_kluisnummer
+        #return het kluisnummer om later te gebruiken
+        else:
+            return -1
+        #kluiscode is niet correct
 
 
 def kluis_openen():
@@ -77,7 +97,19 @@ def kluis_openen():
     Returns:
         bool: True als de ingevoerde combinatie correct is, anders False
     """
-    return
+    kluisnummer = str(input("Voer uw kluisnummer in: "))
+    kluiscode = str(input("Voer uw kluiscode in: "))
+
+    if os.path.exists(bestandsnaam):
+        with open(bestandsnaam, "r") as file:
+            for line in file:
+                saved_kluisnummer, saved_kluiscode = map(str, line.strip().split(";"))
+                #dit stored het eerste int van de file per lijn in saved_kluisnummer, en het 2e deel in saved_kluiscode.met de map functie zet deze lijst om  in ints
+                if saved_kluisnummer == kluisnummer and saved_kluiscode == kluiscode:
+                    #checkt of de opgegeven kluisnummer en kluiscode overeenkomen.
+                    return True
+
+    return False
 
 
 def kluis_teruggeven():
@@ -93,12 +125,113 @@ def kluis_teruggeven():
     Returns:
         bool: True als er een kluiscombinatie verwijderd werd, anders False
     """
-    return
+    kluisnummer = str(input("Voer uw kluisnummer in: "))
+    kluiscode = str(input("Voer uw kluiscode in: "))
+
+    lines_to_keep = []  #maak een lijstje met de kluizen die je wilt bewawren
+    found = False  #maak een var aan om aan te geven of de codes overeenkomen
+
+    if os.path.exists(bestandsnaam):
+        with open(bestandsnaam, "r") as file:
+            for line in file:
+                saved_kluisnummer, saved_kluiscode = map(str, line.strip().split(";"))
+
+                if saved_kluisnummer == kluisnummer and saved_kluiscode == kluiscode:
+                    found = True  # var om te controleren of de codes en de kluis hetzelfde zijn
+                    continue  #deze lijn skipt hij in de loop omdat deze juist niet meer in het bestand wilt hebben
+                else:
+                    #voeg de lines toe die aan het bestand moeten toegevoegd
+                    lines_to_keep.append(line)
+
+        if found:
+            # Schrijf de lines terug nadat je de combinatie hebt geverified
+            with open(bestandsnaam, "w") as file:
+                file.writelines(lines_to_keep)
+            return True
+        #boolean true terug geven als het is gelukt
+        else:
+            return False
+        #boolean False terug geven als het niet is gelukt
+
 
 
 def development_code():
     # Breid deze code uit om het keuzemenu te realiseren:
-    print("1: Ik wil weten hoeveel kluizen nog vrij zijn")
+    loop_hoofdmenu = "false"
+    while loop_hoofdmenu == "false":
+        print("1: Ik wil weten hoeveel kluizen nog vrij zijn")
+        print("2: Ik wil een nieuwe kluis ")
+        print("3: Ik wil mijn kluis openen")
+        print("4: Ik geef mijn kluis terug")
+        print("5: Afsluiten\n")
+        function = input("Voer uw keuze in: (1/2/3/4/5) ")
+        # hoofdmenu in een loop
+
+        if function == "1":
+            loop_hoofdmenu = "true"
+            print(f"Aantal vrije kluizen: {aantal_kluizen_vrij()}\n")
+            # print het aantal kluizen vrij in een fstring
+
+
+        elif function == "2":
+            loop_hoofdmenu = "true"
+            resultaat = nieuwe_kluis()
+            if resultaat == -2:
+                print("Geen kluizen beschikbaar.")
+            elif resultaat == -1:
+                print("Je kluiscode moet precies 4 cijfers en geen ; bevatten")
+            else:
+                print(f"Uw persoonlijke kluis is aangemaakt. Uw kluisnummer is: {resultaat}")
+            # print de resultaten uit de define
+
+
+        elif function == "3":
+            loop_hoofdmenu = "true"
+            if kluis_openen():
+                print("Kluis geopend. (Wachtwoord goed)")
+            else:
+                print("Ongeldige combinatie van kluisnummer en code.")
+            # print de waarden uit de define van kluis openen
+
+        elif function == "4":
+            loop_hoofdmenu = "true"
+            teruggeven = kluis_teruggeven()
+            if teruggeven:
+                print("Kluis succesvol teruggegeven.")
+            elif teruggeven == False:
+                print("Ongeldige combinatie van kluisnummer en code.")
+            else:
+                print("Er is iets fout gegaan. Probeer het later opnieuw")
+            # error code omdat het eerst nog wel eens fout ging met de boolean
+
+
+        elif function == "5":
+            print("U verlaat nu het programma...")
+            break
+        else:
+            print("Ongeldige keuze (1/2/3/4)")
+            loop_hoofdmenu = "false"
+            loophoofdmenu = "false"
+            ongeldige_keuze = "true"
+            # loop vars instellen om te loopen
+
+        loophoofdmenu = "true"
+        while loophoofdmenu == "true":
+            hoofdmenu = str(input("Wilt u terug naar het hoofdmenu? (ja/nee) ")).lower()
+            print("")
+            if hoofdmenu == "ja":
+                loop_hoofdmenu = "false"
+                loophoofdmenu = "false"
+            elif hoofdmenu == "nee":
+                loop_hoofdmenu = "true"
+                print("U verlaat nu deze applicatie...")
+                loophoofdmenu = "false"
+                break
+            else:
+                loophoofdmenu = "true"
+                # grote loop zodat sommige dingen breaken en sommige dingen juist nog een keer loopen
+
+
 
 
 def module_runner():

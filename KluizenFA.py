@@ -21,26 +21,26 @@ def nieuwe_kluis():
                 kluisnummer = int(line.split(";")[0])
                 if kluisnummer in kluisnummers:
                     kluisnummers.remove(kluisnummer)
-            #De lijst updaten met welke kluizen er nog over zijn voor gebruik
-            #leest eerst de file. met line.split[0] haalt hij het kluisnummer van elke kluis in de kluizen.txt
-            #dan verwijdert ie alle nummers die in de tekst file en dan houd je dus de overgebleven dingen over waaruit je een kluis kan assignen
+            # De lijst updaten met welke kluizen er nog over zijn voor gebruik
+            # leest eerst de file. met line.split[0] haalt hij het kluisnummer van elke kluis in de kluizen.txt
+            # dan verwijdert ie alle nummers die in de tekst file en dan houd je dus de overgebleven dingen over waaruit je een kluis kan assignen
 
-#checkt of kluisnummers leeg is
+    # checkt of kluisnummers leeg is
     if not kluisnummers:
         return -2  # Geen kluizen beschikbaar
     else:
         nieuwe_kluisnummer = kluisnummers[0]
         kluiscode = str(input("Voer een kluiscode in: (1234)"))
-        if kluiscode.isdigit() and len(str(kluiscode)) == 4:
-            #isdigit word hier gebruikt om te kijken of het ingevoerde getal een int is.
+        if not ';' in kluiscode and len(str(kluiscode)) == 4:
+            # isdigit word hier gebruikt om te kijken of het ingevoerde getal een int is.
             with open(bestandsnaam, "a") as file:
                 file.write(f"{nieuwe_kluisnummer};{kluiscode}\n")
-                #schrijf het kluisnummer;met;een;kluiscode;weg
+                # schrijf het kluisnummer;met;een;kluiscode;weg
             return nieuwe_kluisnummer
-        #return het kluisnummer om later te gebruiken
+        # return het kluisnummer om later te gebruiken
         else:
             return -1
-        #kluiscode is niet correct
+        # kluiscode is niet correct
 
 
 
@@ -98,7 +98,7 @@ valid = "false"
 while valid == "false":
     print("1: Ik wil weten hoeveel kluizen nog vrij zijn")
     print("2: Ik wil een nieuwe kluis ")
-    print("3: Ik wil even iets uit mijn kluis halen")
+    print("3: Ik wil mijn kluis openen")
     print("4: Ik geef mijn kluis terug")
     print("5: Afsluiten\n")
     function = input("Voer uw keuze in: (1/2/3/4/5) ")
@@ -119,7 +119,7 @@ while valid == "false":
         if resultaat == -2:
             print("Geen kluizen beschikbaar.")
         elif resultaat == -1:
-            print("Je kluiscode moet precies 4 cijfers bevatten")
+            print("Je kluiscode moet precies 4 cijfers en geen ; bevatten")
         else:
             print(f"Uw persoonlijke kluis is aangemaakt. Uw kluisnummer is: {resultaat}")
         #print de resultaten uit de define
