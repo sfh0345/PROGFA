@@ -32,13 +32,14 @@ def aantal_kluizen_vrij():
     Returns:
         int: Het aantal vrije kluizen.
     """
-    if not os.path.exists(bestandsnaam):
-        return 12  # Als het bestand niet bestaat, zijn alle kluizen beschikbaar
-    else:
-        with open(bestandsnaam, "r") as file:
-            lines = file.readlines()
-            return 12 - len(lines)
-        #read hoeveel lijnen er zijn in het bestand. en doe dan 12- aantal lijnen voor hoeveel kluizen nog over zijn
+    try:
+        with open(bestandsnaam, 'r') as file:
+            lines = len(file.readlines())
+        return 12 - lines
+    # 12 - aantal lijnen = aantal vrije kluizen
+    except FileNotFoundError:
+        return 12
+    # Als er geen file is, zijn er nog 12 kluizen vrij
 
 
 def nieuwe_kluis():
@@ -179,7 +180,7 @@ def development_code():
             if resultaat == -2:
                 print("Geen kluizen beschikbaar.")
             elif resultaat == -1:
-                print("Je kluiscode moet precies 4 cijfers en geen ; bevatten")
+                print("Je kluiscode moet meer dan 4 cijfers of letters en geen ; bevatten")
             else:
                 print(f"Uw persoonlijke kluis is aangemaakt. Uw kluisnummer is: {resultaat}")
             # print de resultaten uit de define
